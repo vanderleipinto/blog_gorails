@@ -47,6 +47,25 @@ Podemos usar o comando DESTROY (do activerecord) para APAGAR dados.
 `post.destroy`
 
 
+## 4 - Adding a blog index action
+
+Uma página de índice nos permite exibir todas as postagens do blog em nosso banco de dados. 
+Aprenderemos como configurar rotas que apontam para controladores e ações que renderizam HTML.
+
+Dentro de config/routes.rb definiremos os caminhos
+root que é a rota principal '/'
+
+Rails.application.routes.draw do
+  # Defines the root path route ('/') do lado esquerdo temos o nome do cotroller e do direito temos o action
+  root "blog_posts#index"
+end
+
+Ainda não vai funcionar pois o controller não foi criado e direcionado. Faremos o seguinte
+CRIAÇÃO DO CONTROLLER
+
+Criaremos o arquivo  app/controllers/blog_posts_controller.rb (atenção para as letras maiúsculas e minúsculas)
+
+
 
 
 
