@@ -1,0 +1,17 @@
+
+
+## 1 - Creating a new App
+Vamos usar o rails 7.0.8 e o Ruby 3.2.0
+Criando o projeto 
+  `rails new blog_gorails` 
+Rodando o projeto
+  `rails s`
+
+## 2 - The MVC Pattern Explained
+## 3 - Rails Application Structure Explained
+## 4 - 
+
+
+
+
+
