@@ -8,8 +8,46 @@ Rodando o projeto
   `rails s`
 
 ## 2 - The MVC Pattern Explained
+
 ## 3 - Rails Application Structure Explained
-## 4 - 
+
+## 4 - Creating A Blog Post Model
+
+Para criar o model do post chamado BlogPost
+  `rails generate model BlogPost title:string body:text`
+
+  Ele vai criar o arquivo blog_post.rb em models
+  este arquivo possui uma classe chamada BlogPost que herda de ApplicationRecord
+
+Em db/migrate tem um arquivo para criação da tabela para quando o comando migrate for solicitado.
+
+Agora rodamos o comando para criação da tabela.
+  `rails db:migrate`
+
+Uma vez criada a tabela podemos consultar seus dados por meio de um programa externo. 
+Eu usei o tableplus https://tableplus.com/
+
+Podemos rodar o console para consulta do bd também;
+`rails console`
+`BlogPost.all`
+Por enquanto não teremos nada inserido. Então vamos INSERIR um primeiro dado:
+
+`BlogPost.create(title: "Hello world", body: "This is my very first blog post")`
+
+Agora temos o dado inserido no banco de dados e um objeto ruby que contem os dados.
+Podemos CONSULTAR os dados com os comandos:
+`BlogPost.all`
+`BlogPost.find(1)` onde 1 é o id do objeto.
+
+Podemos salvar esse objeto em uma variável e usar o comando UPDATE (do activerecord) para alterar dados.
+`post = BlogPost.find(1)`
+`post.update(title: 'Updated title')`
+
+Podemos usar o comando DESTROY (do activerecord) para APAGAR dados.
+`post.destroy`
+
+
+
 
 
 
