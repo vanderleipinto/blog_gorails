@@ -64,11 +64,10 @@ Ainda não vai funcionar pois o controller não foi criado e direcionado. Faremo
 CRIAÇÃO DO CONTROLLER
 
 Criaremos o arquivo  app/controllers/blog_posts_controller.rb (atenção para as letras maiúsculas e minúsculas)
+Toda vez que definimos um arquivo no rails, criamos uma classe que combina com o nome do arquivo:
+blog_posts_controller.rb ----> class BlogPostController
 
+Essa classe vai herdar de ApplicationController que vai ter todos os aparatos para http requests, parameters, responses ...
 
-
-
-
-
-
-
+Vamos adicionar um método chamado index e precisamos agora de um template no formato text/html. 
+Esse TEMPLATE dentro da pasta VIEWS vai ser crido dentro em views/blog_posts/index.html.erb
