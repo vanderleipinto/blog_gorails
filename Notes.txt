@@ -69,5 +69,19 @@ blog_posts_controller.rb ----> class BlogPostController
 
 Essa classe vai herdar de ApplicationController que vai ter todos os aparatos para http requests, parameters, responses ...
 
-Vamos adicionar um método chamado index e precisamos agora de um template no formato text/html. 
+Vamos adicionar um método chamado index (mesmo se esse método esteja vazio, o rails procura em views uma pasta com o nome que combine procurando o arquivo correspondente) 
+e precisamos agora de um template no formato text/html. 
 Esse TEMPLATE dentro da pasta VIEWS vai ser crido dentro em views/blog_posts/index.html.erb
+Dentro desse arquivo colocamos os códigos html. 
+Aqui podemos usar um template para usar códigos ruby. `<%= %>` ou `<% %>` onde o que possui '=' é para prints na tela
+
+Em blog_posts_controller.rb, no método index, vamos criar uma variável '@' que vai possuir todos os posts. Assim podemos usar ela no view.
+  `@blog_posts = BlogPost.all`
+Usamos ele no blog_posts/index.html.erb
+    `<h1>My blog<h1>
+
+  <% @blog_posts.each do |blog_post| %>
+    <h2><%= blog_post.title %></h2>
+    <%= blog_post.body %>
+  <% end %>
+`
