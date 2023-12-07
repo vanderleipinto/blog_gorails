@@ -1,16 +1,16 @@
 
-
+_____________________________________________________________________________________________________
 ## 1 - Creating a new App
 Vamos usar o rails 7.0.8 e o Ruby 3.2.0
 Criando o projeto 
   `rails new blog_gorails` 
 Rodando o projeto
   `rails s`
-
+_____________________________________________________________________________________________________
 ## 2 - The MVC Pattern Explained
-
+_____________________________________________________________________________________________________
 ## 3 - Rails Application Structure Explained
-
+_____________________________________________________________________________________________________
 ## 4 - Creating A Blog Post Model
 
 Para criar o model do post chamado BlogPost
@@ -46,8 +46,8 @@ Podemos salvar esse objeto em uma variável e usar o comando UPDATE (do activere
 Podemos usar o comando DESTROY (do activerecord) para APAGAR dados.
 `post.destroy`
 
-
-## 4 - Adding a blog index action
+_____________________________________________________________________________________________________
+## 5 - Adding a Blog Index Action
 
 Uma página de índice nos permite exibir todas as postagens do blog em nosso banco de dados. 
 Aprenderemos como configurar rotas que apontam para controladores e ações que renderizam HTML.
@@ -85,3 +85,55 @@ Usamos ele no blog_posts/index.html.erb
     <%= blog_post.body %>
   <% end %>
 `
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 6 - Adding a Blog Post Show Action
+
+Agora vamos tornar os títulos de cada post 'clicável' para podermos acessar cada post separadamente em página.
+Entraremos agora nos GET, POST, PUT, PATCH e DELETE.
+
+Dentro do arquivo routes.rb vamos criar a seguinte rota
+`get "/blog_posts/:id", to: "blog_posts#show` 
+Aqui o rails vai entender o :id como uma variável com qualquer caractere (menos o '/') e vai ser enviado como PARAMS
+ele vai fazer essa requisição para o controller#show, onde show será um método que irá procurar o post pelo :id, criaremos esse método
+
+`
+def show
+    @blog_post = BlogPost.find(params[:id])
+  end
+`
+Aqui o params é fornecido pelo ApplicationController que vai auxiliar na busca do elemento no banco de dados.
+Temos que ter uma view para essa rota, assim como o index, vamos criar dentro de blog_posts um arquivo chamado show.html.erb que vai exibir o único post
+
+<h1><%= @blog_post.title %><h1>
+<h3><%= @blog_post.body %></h3>
+
+Quando acessamos a url http://127.0.0.1:3000/blog_posts/1 , ele vai rotear para blog_posts passando como parâmetro 1. O blog_posts_controller vai buscar o post
+com id = 1 e exibir em show.
+Caso ele não encontre o post com id informado, vai gerar um erro (ActiveRecord::RecordNotFound), vamos tratar essa excessão em blog_posts_controller:
+
+rescue ActiveRecord::RecordNotFound
+    redirect_to root_path
+  end
+
+Onde root_path é um método que chama o caminho raiz ("blog_posts#index") ou simplesmente '/'. Abordaremos isso adiante.
+
+Agora vamos tornar os títulos links para o post. Faremos isso em app/views/blog_posts/index.html.erb usando o LINK_TO
+    link_to "text to display" , "rota do link"
+no nosso caso no arquivo ficaria assim.
+    <h2><%= link_to blog_post.title, "/blog_posts/#{blog_post.id}" %></h2>
+Mas essa não é a maneira certa de fazer referência ao link, pois se quisermos mudar o nome /blog_posts teríamos que fazer em todos os lugares onde usamos a rota.
+Para isso, em rotas podemos dar um 'apelido' para essa rota e usar esse apelido ao invés do caminho. Para criar esse apelido em /routes.rb usamos o ,as: :apelido
+get "/blog_posts/:id", to: "blog_posts#show", as: :blog_post
+
+E para usar ele no link usamos assim: 
+   apelido_path(parametro) ou  apelido_url(parametro)
+no nosso caso no arquivo ficaria assim.
+   <h2><%= link_to blog_post.title, blog_post_path(blog_post.id) %></h2>
+
+Para SIMPLIFICAR mais ainda, podemos usar desse jeito
+
+   <h2><%= link_to blog_post.title, blog_post %></h2>
+Aqui ele já vai inferir que você quer o link blog_post e por meio do objeto citado ele já procura com o id.
+Isso é ajudado pelo sistema de nomes que o rails atribui para o model. Se executarmos `BlogPost.model_name` poderemos verificar os nomes que o rails usa para o modelo
+
+
