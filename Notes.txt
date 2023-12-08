@@ -226,3 +226,22 @@ Caso não haja erros e o post seja criado, ele vai redirecionar para o objeto cr
                 redirect_to @blog_post
 Ao usar @blog_post, ele redireciona para o post usando o id do post criado. Coisas do rails.
 
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 9 - Edit & Update Blog Post Actions
+
+Vamos criar a rota para editar o post. Lembrando que a rota será criada em route.rb e deve-se colocar de maneira
+que os dados da rota não sejam confundidos com parâmetros, por isso ela deve ficar antes do show:
+      `get "/blog_posts/:id/edit", to: "blog_posts#edit", as: :edit_blog_post`
+
+Seguiremos os mesmos passos das rotas anteriores, criando o método blog_posts_controller#edit e o arquivo
+views/blog_posts/edit.html.erb
+
+Agora vamos gerar o mesmo formulário para o post solicitado. Esse formulário é exatamente igual ao do new, então podemos
+usá-lo copiando. Mas nesse caso vamos criar um PARTIAL que será usado em ambos.
+Em rails os partials são nomeados precedidos de '_'. então dentro de views/blog_posts criaremos um arquivo chamado
+_form.html.erb e para usar ele dentro das views fazemos o seguinte:
+
+          <%= render partial: 'form', locals: {blog_post: @blog_post} %>
+
+
+se vai usar esse partial você deve informar diretamente a variável blog_post que será usada.
