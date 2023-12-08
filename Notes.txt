@@ -148,3 +148,27 @@ como ele não vai achar um post com id 'new', ele vai nos redirecionar para a p�
 Uma vez criada essa rota, criaremos o arquivo correspondente em views/blog_posts, chamado new.html.erb (obs: no nome do arquivo usa-se '.' e não '_')
 
 Vamos criar o método para adicionar um novo post em blog_posts_controller#new
+Aqui dentro vamos instanciar um objeto 
+`@blog_post = BlogPost.new `
+Quando instanciamos esse objeto, ele não é salvo no banco de dados. Com ele podemos criar um FORM na página específica da seguinte maneira.
+
+        <%= form_with model: @blog_post do |form|%>
+          <div>
+            <%= form.label :title %>
+            <%= form.text_field :title %>
+          </div>
+          <div>
+            <%= form.label :body %>
+            <%= form.text_area :body %>
+          </div>
+          <%= form.button %>
+        <% end %>
+
+Uma vez criado esse formulário, podemos agora criar a rota POST para usar esses parametros e criar o objeto no bd. Em routes.rb faremos essa rota.
+
+  post "/blog_posts", to: "blog_posts#create", as: :blog_posts
+
+Próximo passo agora é criar o método create no blog_posts_controller.rb
+
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 8 - Adding a New Blog Post Action
