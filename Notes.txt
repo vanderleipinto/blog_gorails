@@ -137,3 +137,14 @@ Aqui ele já vai inferir que você quer o link blog_post e por meio do objeto ci
 Isso é ajudado pelo sistema de nomes que o rails atribui para o model. Se executarmos `BlogPost.model_name` poderemos verificar os nomes que o rails usa para o modelo
 
 
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 7 - Adding a New Blog Post Action
+
+Criaremos uma nova rota em routes.rb
+    get "/blog_posts/new", to: "blog_posts#new", as: :new_blog_post
+OBS: Essa rota ficará acima da rota existente (show) pois o rails busca as rotas em sequência, se ele encontrar a primeira rota o show, ele vai acessá-la usando o new como um parâmetro,
+como ele não vai achar um post com id 'new', ele vai nos redirecionar para a página index.
+
+Uma vez criada essa rota, criaremos o arquivo correspondente em views/blog_posts, chamado new.html.erb (obs: no nome do arquivo usa-se '.' e não '_')
+
+Vamos criar o método para adicionar um novo post em blog_posts_controller#new
