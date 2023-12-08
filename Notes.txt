@@ -171,4 +171,58 @@ Uma vez criado esse formulário, podemos agora criar a rota POST para usar esses
 Próximo passo agora é criar o método create no blog_posts_controller.rb
 
 __________________________________________________________________________________________________________________________________________________________________________________________________________
-## 8 - Adding a New Blog Post Action
+## 8 - Creating New Blog Posts
+
+Criamos o método blog_posts_controller#create para tratar dos params recebidos do FORM. Poderíamos criar um objeto BlogPost da seguinte maneira:
+  `@blog_post = BlogPost.new(params[:blog_post])` mas o rails não passar os params diretamente para o database para evitar alterações ilícitas de dados. Logo faremos a adição 
+  da seguinte maneira:
+
+  Criaremos um método PRIVADO para tratar desses PARAMS. Esse método vai retornar os parâmetros permitidos.
+
+          private 
+          def blog_post_params
+            params.(:blog_post).permit(:title, :body)
+          end
+
+E no método create devemos verificar se o post foi salvo corretamente no banco de dados.
+
+        def create
+            @blog_post = BlogPost.new(blog_post_params)
+            if @blog_post.save
+              redirect_to @blog_post
+            else
+              render :new, status: :unprocessable_entity
+            end
+          end
+
+Se salvar direciona para @blog_post
+Caso não salve por falta de dados ele renderiza a página new, manda o status de erro para o navegador,
+ao renderizar a página new, ele mantem o objeto que lá já estava e o objeto agora carrega com ele o erro que ocorreu,
+os campos preenchidos do formulário permanecem preenchidos.
+
+Para validarmos o model para não receber campos em branco, modificaremos o arquivo models/blog_post.rb da seguinte maneira
+
+          class BlogPost < ApplicationRecord
+            validates :title, presence: true
+            validates :body, presence: true
+          end
+
+Agora o blog_post só será salvo se os campos estiverem preenchidos.
+No caso de não for salvo, podemos mostrar a mensagem de erro para o usuário na tela de formulário renderizada:
+
+          <%= form_with model: @blog_post do |form|%>
+            <%if form.object.errors.any? %>
+              <div>
+                <% form.object.errors.full_messages.each do |message| %>
+                    <div><%= message %></div>
+                  <% end %>
+              </div>
+            <% end %>
+            ...
+
+Vai mostrar as mensagens que os campos não podem ficar em branco.
+Caso não haja erros e o post seja criado, ele vai redirecionar para o objeto criado em:
+          if @blog_post.save      
+                redirect_to @blog_post
+Ao usar @blog_post, ele redireciona para o post usando o id do post criado. Coisas do rails.
+
