@@ -1,7 +1,15 @@
 class BlogPostsController < ApplicationController
+  
+  
+  before_action :authenticate_user!, except: [:show, :index]
+  
   before_action :set_blog_post, only:  [:show, :edit, :update, :destroy ]
   #ou
   #before_action :set_blog_post, exept: [:index, :new, :create,  ]
+  
+  
+  
+  
   def index
     @blog_posts = BlogPost.all
   end
@@ -52,6 +60,10 @@ class BlogPostsController < ApplicationController
       redirect_to root_path
     end
   end
+
+  # def authenticate_user!
+  #   redirect_to new_user_session_path, alert: "You must be signed in to continue" unless user_signed_in?
+  # end
 
   private 
 

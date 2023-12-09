@@ -371,3 +371,20 @@ Para rodar isso temos que usar o comando
 Agora vamos restringir o acesso à algumas páginas dependendo da autenticação do usuário. Para isso podemos usar uma função
 user_signed_in? dentro dos métodos em blog_posts_controller condicionando o acesso.
 
+Mas podemos usar um comando nativo do devise em before_action no blog_posts_controller.rb para facilitar.
+`before_action :authenticate_user!, except: [:show, :index]`
+
+Esse comando é equivalente à:
+
+        private
+        def authenticate_user!
+            redirect_to new_user_session_path, alert: "You must be signed in to continue" unless user_signed_in?
+        end
+
+Isso vai verificar se o usuário está logado antes de ir para página solicitada, exceto para mostrar e para página principal.
+Caso não esteja logado será redirecionado para root_path e terá a mensagem de usuário não logado. 
+
+OBS: Todos os métodos públicos dentro de blog_posts_controller.rb são considerados ACTIONS e os
+métodos PRIVADOS são considerados helpers.
+
+
