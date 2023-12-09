@@ -300,5 +300,74 @@ deva permanecer. Ficaria assim:
 
         resources :blog_posts
 
+Também faremos um refactoring no blog_posts_controller. Em alguns métodos usamos uma mesma linha de comando no início dele
+vamos usar um recurso chamado before_action que vai executar um método que conterá essa linha de comando. Ele será executado
+somente nos métodos indicados.
 
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 11 - Authenticating Blog Admin Pages
+
+Aqui usaremos uma GEM chamada devise, que ajuda a criar um database model para users e manusear autenticações e 
+passwords.
+`bundle add devise`
+`rails g devise:install`
+
+Vai criar arquivos para configuração e inicialização do devise, definir default url options para enviar email no modelo
+desenvolvedor em config/enviroments/development.rb e adicionar a linha: 
+` config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }`
+
+Vamos adicionar em app/views/layouts/application.html.erb as linhas informadas:
+
+        <p class="notice"><%= notice %></p>
+        <p class="alert"><%= alert %></p> 
+Essas linhas nos mostram mensagens no momento em que fazemos login or fail to login or logout.
+
+Todas essas linhas foram indicadas no momento em que rodamos o comando rails g devise:install
+
+Agora vamos criar o model para usuário. Da mesma maneira que geramos um model normal mas agora adicionando deviser
+
+rails g devise User
+
+Vai gerar o model, a rota e o dbmigrate para user. A rota contém os links para login etc.
+em models/user.rb pode-se desbloquear os artifícios de login com facebook, github etc. Esses comandos vêm comentados
+por padrão. Se quiser usar tais artifícios deve se descomentar em migrations os blocos afins.
+
+Agora que acrescentamos esse model, devemos fazer o migrations. Se rodarmos o servidor sem o migration o rails percebe
+que há models pendentes de migration e fornece um erro: ActiveRecord::PendingMigrationError
+
+`rails db:migrate`
+`rails server`
+
+Podemos agora desfrutar da autenticação de usuário. Como ele já cria as rotas automaticamente, podemos usar o link para sign_up
+http://127.0.0.1:3000/users/sign_up
+
+Fazemos o sign_up normalmente e agora podemos usar dados do usuário logado. Vamos usar isso para gerar uma série de links.
+            <div>
+          <% if user_signed_in?%>
+            <%=  link_to "Profile", edit_user_registration_path %>
+            <%= button_to "Log Out", destroy_user_session_path, method: :delete %>
+            <% else %>
+            <%= link_to "Log in", new_user_session_path %>
+            <%= link_to "Sign Up", new_user_registration_path %>
+          <% end %>
+       </div>
+
+Como se trata de um blog e não queremos que qualquer um se registre no nosso sistema, podemos suprimir o registro'
+no arquivo model/user.rb, logo esses links de user_registration não funcionarão e os retiraremos da página.
+
+Sendo assim, para fazer o login com um usuário previamente registrado, somente com o link manualmente digitado.
+Mas faremos a 'inserção' de usuários que serão padrões no modo desenvolvimento diretamente no sistema.
+dentro de db/seeds.rb. Não usaremos create, para podermos rodar novamente sem gerar erros.
+
+          user = User.where(email: "aa@aa").first_or_initialize
+          user.update!(
+            password: "password",
+            password_confirmation: "password"
+          )
+Assim ele vai rodar a primeira vez e criar o usuário. Na segunda vez ele vai encontrar o usuário e alterar a senha.
+Para rodar isso temos que usar o comando
+`rails db:seed`
+
+Agora vamos restringir o acesso à algumas páginas dependendo da autenticação do usuário. Para isso podemos usar uma função
+user_signed_in? dentro dos métodos em blog_posts_controller condicionando o acesso.
 
