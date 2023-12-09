@@ -224,7 +224,8 @@ Vai mostrar as mensagens que os campos não podem ficar em branco.
 Caso não haja erros e o post seja criado, ele vai redirecionar para o objeto criado em:
           if @blog_post.save      
                 redirect_to @blog_post
-Ao usar @blog_post, ele redireciona para o post usando o id do post criado. Coisas do rails.
+Ao usar @blog_post, ele redireciona para o post usando o id do post criado. usamos @blog_post como atalho informado
+no routes. Porque o normal seria blog_post_path(@blog_post)
 
 __________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 9 - Edit & Update Blog Post Actions
@@ -264,6 +265,40 @@ Como de praxe, vamos também criar o método blog_posts_controller#update nos mo
               end
 
 Uma vez feitas as alterações ele manda novamente para o @blog_post para mostrar o que foi alterado.
+Ao usar @blog_post, ele redireciona para o post usando o id do post editado. usamos @blog_post como atalho informado
+no routes. Porque o normal seria blog_post_path(@blog_post)
 
 __________________________________________________________________________________________________________________________________________________________________________________________________________
 ## 10 - Adding a Blog Post Destroy Action and Refactoring
+
+Por se tratar de um blog, a opção deletar não aparece para cada elemento, então vamos colocar um botão de deletar
+na opção editar.
+
+  <%= button_to "Delete", @blog_post, method: :delete %>
+
+Aqui criamos um botão com o nome "Delete", que REDIRECIONA para o @blog_post, o método do botão foi modificado para DELETE
+então quando ele chegar em routes vai procurar o método especificado. Vamos criar a rota para o delete.
+      delete "blog_posts/:id" , to: "blog_posts#destroy"
+
+Uma vez criado a rota do delete vamos criar o método blog_posts_controller#destroy
+            def destroy
+                @blog_post = BlogPost.find(params[:id])
+                @blog_post.destroy  
+                redirect_to root_path
+              end
+
+Aqui não precisamos confirmar nada, ele vai apagar e redirecionar para o caminho root.
+Mas para não ter o problema de clicar em delete sem querer, vamos criar uma confirmação por meio da opção turbo.
+
+<%= button_to "Delete", @blog_post, method: :delete, data: {turbo_confirm: "Are you sure?"}%>
+Turbo vem do hotwire que ajuda na performance do sistema.
+
+REFACTORING --------------
+Agora faremos um Refactoring no routes.
+O rails provê um recurso chamado resource que substitui todas as rotas de CRUD criadas no routes. Embora o root_path
+deva permanecer. Ficaria assim:
+
+        resources :blog_posts
+
+
+
