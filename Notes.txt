@@ -244,4 +244,26 @@ _form.html.erb e para usar ele dentro das views fazemos o seguinte:
           <%= render partial: 'form', locals: {blog_post: @blog_post} %>
 
 
-se vai usar esse partial você deve informar diretamente a variável blog_post que será usada.
+se vai usar esse partial você deve informar diretamente a variável blog_post que será usada. Assim, teremos no edit e no new
+o formulário pronto, sendo que no edit o formulário vai estar preenchido com os dados obtidos pelo param :id
+
+Como os dados estão preenchidos, o rails entende que temos que ter um comando patch, ao invés de POST. Vamos criar 
+a rota patch para o edit.
+
+        patch "blog_posts/:id" , to: "blog_posts#update"
+
+Como de praxe, vamos também criar o método blog_posts_controller#update nos moldes do new agora UPDATE
+
+              def update
+                  @blog_post = BlogPost.find(params[:id])
+                  if @blog_post.update(blog_post_params)
+                    redirect_to @blog_post
+                  else
+                    render :edit, status: :unprocessable_entity
+                  end
+              end
+
+Uma vez feitas as alterações ele manda novamente para o @blog_post para mostrar o que foi alterado.
+
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 10 - Adding a Blog Post Destroy Action and Refactoring
