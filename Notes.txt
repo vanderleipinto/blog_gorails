@@ -388,3 +388,32 @@ OBS: Todos os métodos públicos dentro de blog_posts_controller.rb são conside
 métodos PRIVADOS são considerados helpers.
 
 
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 11 - Authenticating Blog Admin Pages
+
+Podemos usar o tailwind adicionando uma gem específica. Para adicionar a gem nas dependências:
+    `bundle add tailwindcss-rails`
+    `rails tailwindcss:install`
+
+Tailwind CSS há um comando que irá procurar por mudanças e vai recompilar o CSS para incluir as alteraçõs. Uma espécie
+de live server. Agora para rodar o projeto usaremos esse comando ao invés de rails s.
+`bin/dev`
+
+Em bin/dev temos o comando para instalar e rodar o foreman que vai WATCH o projeto para alterações do CSS.
+(no meu caso, por algum motivo o bin/dev não instalou a gem, então eu a instalei manualmente `gem install foreman`)
+
+Outra coisa que acontece na instalação é a inclusão de uma linha de tailwind no layout/application.html. E também a criação
+de um arquivo css e javascript 
+tailwind app/assets/stylesheets/application.tailwind.css
+config/tailwind.config.js
+
+<%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+
+Agora ao rodar o projeto, notaremos que o Tailwind remove todo o estilo existente. Adicionaremos a class='prose' em body
+para ter um estilo genérico.
+
+As telas de login do devise podem ter seu próprio arquivo de views, para isso rodamos o comando:
+`rails g devise:views`
+
+agora podemos alterar o estilo usando tailwind dentro dos arquivos gerado na pasta views/devise.
+
