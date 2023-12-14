@@ -473,8 +473,24 @@ IMPORTATE: vamos adicionar no app/models/blog_post.rb um campo scope quer vai se
 
 Usamos aqui o -> (lambda) para executar esse bloco toda vez que se chama o scope. Assim o Time.current será atualizado sempre que solicitado
 Agora podemos usar o comando BlogPost.draft assim como usamos o comando BlogPost.all
+Outra mudança que faremos aqui é acrescentar um método para verificar se o post é um rascunho (draft)
 
-Agora vamos em blog_posts_controller#index e alterar o BlogPost.all para BlogPost.published
+        def draft?
+          published_at.nil?
+        end
+
+Retorna true se o published_at estiver em branco, o que caracteriza um rascunho.
+Também para publicado e agendado
+
+        def published?
+            published_at? && published_at <= Time.current
+        end
+        
+        def scheduled?
+          published_at? && published_at > Time.current
+        end
+
+Agora vamos em blog_posts_controller#index e alterar o BlogPost.all para BlogPost.published, 
 Faremos uma lógica no set_blog_post para mostrar os blogs corretos:
 
       
@@ -485,3 +501,11 @@ Para autorizar salvar esse campo no banco de dados vamos alterar a action blog_p
 permitir recebê-lo como parâmetro
 
 Agora vamos adicionar o campo Published at no formulário de posts
+
+        <div>
+            <%= form.label :published_at %>
+            <%= form.datetime_select :published_at, include_blank: true %>
+        </div>
+OBS: o include_blank: true é para o campo de date vir em branco, caso contrário ele vem com a data atual.
+
+https://gorails.com/episodes/adding-scheduled-blog-posts 16 minutos para continuar
