@@ -389,7 +389,7 @@ métodos PRIVADOS são considerados helpers.
 
 
 __________________________________________________________________________________________________________________________________________________________________________________________________________
-## 11 - Authenticating Blog Admin Pages
+## 12 - Adding TailwindCSS to Rails
 
 Podemos usar o tailwind adicionando uma gem específica. Para adicionar a gem nas dependências:
     `bundle add tailwindcss-rails`
@@ -415,5 +415,73 @@ para ter um estilo genérico.
 As telas de login do devise podem ter seu próprio arquivo de views, para isso rodamos o comando:
 `rails g devise:views`
 
-agora podemos alterar o estilo usando tailwind dentro dos arquivos gerado na pasta views/devise.
+agora podemos alterar o estilo usando tailwind dentro dos arquivos gerado na pasta views/devise. nesse
+exemplo vamos alterar o botão de login em app/views/devise/sessions/new.html.erb
 
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 13 - Deploying our Rails Blog to Production
+
+Para fazer o deploy, temos que fazer o push do repositório para o github.
+Faremos o deploy em render.com, que é completamente free.
+
+Dentro do site vamos em new webservices -> connect a repository -> escolher o repositório do github
+Já estará pré configurado, só precisa acrescentar o nome do domínio e escolher a opção free.
+
+Seguindo os passos das aulas mas o site gerava um erro sem logs. Aula pulada.
+
+MAS na aula ele ensinou como mudar o banco de dados do sistema do sqlite para postgrees
+
+rails db:system:change --to=postgresql
+
+Vai fazer a mudança forçada e adicionar os Gems necessários. Após rodamos o bundle para os Gems
+`bundle`
+
+Fiz isso em uma nova branch do git para não ter problemas se desse errado. Deu errado. Erro nas versões.
+
+
+__________________________________________________________________________________________________________________________________________________________________________________________________________
+## 14 - Adding Scheduled Blog Posts
+
+Para agendar os posts vamos adicionar um campo no blog_post.rb de string. Será draft ou published
+Mas dessa assim não teremos uma maneira de agendar o post para o futuro. 
+
+A outra opção  é adicionar published_at datetime field que será nil (não publicado) ou um current time (one year ago)
+significa que já foi publicado ou 1 year from_now que significa que foi agendado para publicação. E é essa que usaremos.
+
+`rails generate migration AddPublishedAtToBlogPosts published_at:datetime`
+
+Verificando o comando AddPublishedAtToBlogPosts, o rails vai perceber que o comando termina com BlogPosts e vai adicionar o
+campo published_at no model BlogPosts.
+Ao rodar esse comando ele vai criar um arquivo no migrations que vai adicionar esses campos à tabela.
+
+      class AddPublishedAtToBlogPosts < ActiveRecord::Migration[7.0]
+        def change
+          add_column :blog_posts, :published_at, :datetime
+        end
+      end
+
+Para sintetizar tudo vamos rodar:
+`rails db:migrate`
+
+Agora precisamos de uma maneira de trabalhar com esses três tipos de posts (postado, rascunho e agendado)
+
+IMPORTATE: vamos adicionar no app/models/blog_post.rb um campo scope quer vai selecionar os posts certos.
+
+      scope :draft, -> { where(published_at: nil)}
+      scope :published, -> { where("published_at <= ?", Time.current) }
+      scope :scheduled, -> { where("published_at > ? ", Time.current) }
+
+Usamos aqui o -> (lambda) para executar esse bloco toda vez que se chama o scope. Assim o Time.current será atualizado sempre que solicitado
+Agora podemos usar o comando BlogPost.draft assim como usamos o comando BlogPost.all
+
+Agora vamos em blog_posts_controller#index e alterar o BlogPost.all para BlogPost.published
+Faremos uma lógica no set_blog_post para mostrar os blogs corretos:
+
+      
+      user_signed_in? ?  BlogPost.find(params[:id]) : BlogPost.published.find(params[:id])
+Ou seja, se o usuário tiver logado, vai mostrar todos os blogs, se não, vai mostrar somente os publicados.
+
+Para autorizar salvar esse campo no banco de dados vamos alterar a action blog_post_params adicionando o published_at para 
+permitir recebê-lo como parâmetro
+
+Agora vamos adicionar o campo Published at no formulário de posts
